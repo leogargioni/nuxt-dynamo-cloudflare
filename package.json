@@ -9,9 +9,11 @@
     "preview": "npm run build && wrangler pages dev ./dist",
     "postinstall": "nuxt prepare",
     "deploy": "npm run build && wrangler pages deploy ./dist",
-    "build-cf-types": "wrangler types"
+    "build-cf-types": "wrangler types",
+    "test": "wrangler pages dev ./dist"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.554.0",
     "nuxt": "^3.11.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
