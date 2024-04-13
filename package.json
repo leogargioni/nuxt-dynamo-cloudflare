@@ -9,7 +9,6 @@
     "preview": "npm run build && wrangler pages dev ./dist",
     "postinstall": "nuxt prepare",
     "deploy": "npm run build && wrangler pages deploy ./dist",
-    "build-cf-types": "wrangler types",
     "test": "wrangler pages dev ./dist"
   },
   "dependencies": {
