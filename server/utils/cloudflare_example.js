@@ -1,6 +1,6 @@
 // ADAPTED FROM https://github.com/cloudflare/workers-aws-template
 
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
 // addEventListener('fetch', event => {
 // 	event.respondWith(handleRequest(event.request));
@@ -29,20 +29,27 @@ export async function handleRequest() {
 }
 
 async function dynamoExample() {
-	const client = new DynamoDBClient({
-		region: process.env.AWS_REGION,
-		credentialDefaultProvider: myCredentialProvider,
+    const client = new DynamoDBClient({
+        region: process.env.AWS_REGION,
+        credentialDefaultProvider: myCredentialProvider,
 		...(process.env.ENVIRONMENT === 'development' && { endpoint: 'http://localhost:8000' }),
-	});
+    });
 
-	// replace with your table name and key as appropriate
-	const query = new QueryCommand({
-		TableName: process.env.AWS_DYNAMO_TABLE,
-        KeyConditionExpression: "PK = :pk",
-        ExpressionAttributeValues: {
-            ":pk": { S: "GROUP" },
-        },
-	});
-	const results = await client.send(query);
-	return results;
+    // replace with your table name and key as appropriate
+    const put = new PutItemCommand({
+        TableName: process.env.AWS_DYNAMO_TABLE,
+        Item: {
+            "greeting": { S: "Hello!" },
+            PK: { S: "world" }
+        }
+    });
+    await client.send(put);
+    const get = new GetItemCommand({
+        TableName: process.env.AWS_DYNAMO_TABLE,
+        Key: {
+            PK: { S: "world" }
+        }
+    });
+    const results = await client.send(get);
+    return results.Item;
 }

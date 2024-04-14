@@ -1,14 +1,20 @@
-import { QueryCommand } from "@aws-sdk/client-dynamodb";
+import { PutItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
 
 export default defineEventHandler(async (event) => {
-    let params = {
+    const put = new PutItemCommand({
         TableName: process.env.AWS_DYNAMO_TABLE,
-        KeyConditionExpression: "PK = :pk",
-        ExpressionAttributeValues: {
-            ":pk": { S: "GROUP" },
-        },
-    };
-    let data = await ddbClient.send(new QueryCommand(params));
-
-    return data
+        Item: {
+            "greeting": { S: "Hello!" },
+            PK: { S: "world" }
+        }
+    });
+    await ddbClient.send(put);
+    const get = new GetItemCommand({
+        TableName: process.env.AWS_DYNAMO_TABLE,
+        Key: {
+            PK: { S: "world" }
+        }
+    });
+    const results = await ddbClient.send(get);
+    return results.Item;
 });
